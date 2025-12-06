@@ -50,4 +50,8 @@ public class User {
     public void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+    public boolean isAdmin() {
+        return this.role == Role.ADMIN;
+    }
+
 }
