@@ -5,17 +5,31 @@ import api from "../api/axios";
 function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [darkMode, setDarkMode] = useState(false);
 
   const token = localStorage.getItem("token");
 
-  
+  // Load dark mode preference from localStorage
+  useEffect(() => {
+    const savedMode = localStorage.getItem("darkMode") === "true";
+    setDarkMode(savedMode);
+  }, []);
+
+  // Toggle dark mode and save to localStorage
+  const toggleDarkMode = () => {
+    setDarkMode((prev) => {
+      localStorage.setItem("darkMode", !prev);
+      return !prev;
+    });
+  };
+
   const fetchUsers = useCallback(async () => {
     if (!token) {
-        setLoading(false);
-        alert("No authentication token found. Please log in as an admin.");
-        return;
+      setLoading(false);
+      alert("No authentication token found. Please log in as an admin.");
+      return;
     }
-    
+
     try {
       const res = await api.get("/admin/users", {
         headers: {
@@ -24,7 +38,7 @@ function AdminDashboard() {
       });
       setUsers(res.data);
     } catch (err) {
-      console.error("Failed to fetch users:", err)
+      console.error("Failed to fetch users:", err);
       alert("Failed to fetch users. Access denied or server error.");
     } finally {
       setLoading(false);
@@ -35,7 +49,6 @@ function AdminDashboard() {
     fetchUsers();
   }, [fetchUsers]);
 
-  
   const handleDelete = async (userId) => {
     if (!window.confirm("Are you sure you want to delete this user? This action cannot be undone.")) return;
 
@@ -47,14 +60,12 @@ function AdminDashboard() {
     try {
       const res = await api.delete(`/admin/users/${userId}`, {
         headers: {
-          Authorization: `Bearer ${token.trim()}`, 
+          Authorization: `Bearer ${token.trim()}`,
         },
       });
-      
-     
+
       setUsers(users.filter(u => Number(u.id) !== Number(userId)));
       alert(res.data.message || "User deleted successfully!");
-      
     } catch (err) {
       console.error("Delete failed:", err);
       if (err.response?.status === 403) {
@@ -65,36 +76,34 @@ function AdminDashboard() {
     }
   };
 
-
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
+      <div className={`${darkMode ? "bg-gray-900" : "bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50"} min-h-screen flex items-center justify-center`}>
         <div className="text-center">
           <svg className="animate-spin h-12 w-12 text-blue-600 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
-          <p className="text-gray-600 font-medium">Loading users...</p>
+          <p className={`${darkMode ? "text-gray-300" : "text-gray-600"} font-medium`}>Loading users...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-      
+    <div className={`${darkMode ? "bg-gray-900 text-gray-300" : "bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50"} min-h-screen`}>
+    
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        {/* Stats Cards - Calculated based on fetched data */}
+        {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {/* Total Users Card */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
+          {/* Total Users */}
+          <div className={`${darkMode ? "bg-gray-800" : "bg-white"} rounded-xl shadow-lg p-6`}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500 mb-1">Total Users</p>
-                <p className="text-3xl font-bold text-gray-800">{users.length}</p>
+                <p className={`${darkMode ? "text-gray-400" : "text-gray-500"} text-sm mb-1`}>Total Users</p>
+                <p className={`${darkMode ? "text-gray-100" : "text-gray-800"} text-3xl font-bold`}>{users.length}</p>
               </div>
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                 <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -104,12 +113,14 @@ function AdminDashboard() {
             </div>
           </div>
 
-          {/* Regular Users Card */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
+          {/* Regular Users */}
+          <div className={`${darkMode ? "bg-gray-800" : "bg-white"} rounded-xl shadow-lg p-6`}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500 mb-1">Regular Users</p>
-                <p className="text-3xl font-bold text-gray-800">{users.filter(u => u.role === 'USER').length}</p>
+                <p className={`${darkMode ? "text-gray-400" : "text-gray-500"} text-sm mb-1`}>Regular Users</p>
+                <p className={`${darkMode ? "text-gray-100" : "text-gray-800"} text-3xl font-bold`}>
+                  {users.filter(u => u.role === 'USER').length}
+                </p>
               </div>
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                 <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -119,12 +130,14 @@ function AdminDashboard() {
             </div>
           </div>
 
-          {/* Admins Card */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
+          {/* Admins */}
+          <div className={`${darkMode ? "bg-gray-800" : "bg-white"} rounded-xl shadow-lg p-6`}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500 mb-1">Admins</p>
-                <p className="text-3xl font-bold text-gray-800">{users.filter(u => u.role === 'ADMIN').length}</p>
+                <p className={`${darkMode ? "text-gray-400" : "text-gray-500"} text-sm mb-1`}>Admins</p>
+                <p className={`${darkMode ? "text-gray-100" : "text-gray-800"} text-3xl font-bold`}>
+                  {users.filter(u => u.role === 'ADMIN').length}
+                </p>
               </div>
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                 <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -136,58 +149,41 @@ function AdminDashboard() {
         </div>
 
         {/* Users Table */}
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-xl font-bold text-gray-800">All Users</h2>
-            <p className="text-sm text-gray-500 mt-1">View and manage user accounts</p>
+        <div className={`${darkMode ? "bg-gray-800" : "bg-white"} rounded-2xl shadow-lg overflow-hidden`}>
+          <div className={`px-6 py-4 border-b ${darkMode ? "border-gray-700" : "border-gray-200"}`}>
+            <h2 className={`${darkMode ? "text-gray-100" : "text-gray-800"} text-xl font-bold`}>All Users</h2>
+            <p className={`${darkMode ? "text-gray-400" : "text-gray-500"} text-sm mt-1`}>View and manage user accounts</p>
           </div>
-            
+
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className={`${darkMode ? "bg-gray-700 text-gray-300" : "bg-gray-50 text-gray-500"}`}>
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    ID
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Name
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Email
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Role
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">ID</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Email</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Role</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {users.map((u) => (
-                  <tr key={u.id} className="hover:bg-gray-50 transition duration-150">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      #{u.id}
-                    </td>
+                  <tr key={u.id} className={`hover:${darkMode ? "bg-gray-700" : "bg-gray-50"} transition duration-150`}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">{`#${u.id}`}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        {/* User Avatar Initial */}
                         <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full flex items-center justify-center text-white font-semibold">
                           {u.name.charAt(0).toUpperCase()}
                         </div>
                         <div className="ml-3">
-                          <p className="text-sm font-medium text-gray-900">{u.name}</p>
+                          <p className="text-sm font-medium">{u.name}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      {u.email}
-                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">{u.email}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                        u.role === 'admin' 
-                          ? 'bg-purple-100 text-purple-800' 
-                          : 'bg-blue-100 text-blue-800'
+                        u.role === 'ADMIN' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
                       }`}>
                         {u.role.charAt(0).toUpperCase() + u.role.slice(1)}
                       </span>

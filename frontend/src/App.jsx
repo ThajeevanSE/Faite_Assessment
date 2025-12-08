@@ -6,12 +6,14 @@ import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./pages/Profile";
 import ChangePassword from "./pages/ChangePassword";
-
 import AdminDashboard from "./pages/AdminDashboard";
+import { DarkModeProvider } from "./context/DarkModeContext";
+
 
 function App() {
-  return (
-    <BrowserRouter>
+  return (  
+    <DarkModeProvider>
+      <BrowserRouter>
       <Navbar />
 
       <Routes>
@@ -54,6 +56,8 @@ function App() {
 
       </Routes>
     </BrowserRouter>
+    </DarkModeProvider>
+    
   );
 }
 
