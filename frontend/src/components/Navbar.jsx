@@ -50,9 +50,8 @@ function Navbar() {
 
   return (
     <nav
-      className={`${
-        isDarkMode ? "bg-gray-900 text-white" : "bg-white text-gray-800"
-      } shadow-md border-b border-gray-200 sticky top-0 z-50 transition-colors duration-300`}
+      className={`${isDarkMode ? "bg-gray-900 text-white" : "bg-white text-gray-800"
+        } shadow-md border-b border-gray-200 sticky top-0 z-50 transition-colors duration-300`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
@@ -81,11 +80,10 @@ function Navbar() {
             <div className="text-xl font-bold hidden sm:flex space-x-4">
               <Link
                 to="/dashboard"
-                className={`px-4 py-2 rounded-lg font-medium transition duration-200 ${
-                  isDarkMode
+                className={`px-4 py-2 rounded-lg font-medium transition duration-200 ${isDarkMode
                     ? "text-white hover:bg-gray-800"
                     : "text-gray-800 hover:bg-blue-50 hover:text-blue-600"
-                }`}
+                  }`}
               >
                 {role === "admin" ? "Admin Dashboard" : "Dashboard"}
               </Link>
@@ -93,15 +91,26 @@ function Navbar() {
               {role !== "admin" && (
                 <Link
                   to="/profile"
-                  className={`px-4 py-2 rounded-lg font-medium transition duration-200 ${
-                    isDarkMode
+                  className={`px-4 py-2 rounded-lg font-medium transition duration-200 ${isDarkMode
                       ? "text-white hover:bg-gray-800"
                       : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
-                  }`}
+                    }`}
                 >
                   Profile
                 </Link>
               )}
+              {role !== "admin" && (
+                <Link
+                  to="/my-products"
+                  className={`px-4 py-2 rounded-lg font-medium transition duration-200 ${isDarkMode
+                      ? "text-white hover:bg-gray-800"
+                      : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                    }`}
+                >
+                  Add Products
+                </Link>
+              )}
+
             </div>
           </div>
 
@@ -110,11 +119,10 @@ function Navbar() {
             {/* Dark mode toggle */}
             <button
               onClick={toggleDarkMode}
-              className={`p-2 rounded-lg transition duration-200 ${
-                isDarkMode
+              className={`p-2 rounded-lg transition duration-200 ${isDarkMode
                   ? "text-yellow-300 hover:bg-gray-700"
                   : "text-gray-600 hover:bg-gray-100"
-              }`}
+                }`}
               title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
             >
               {isDarkMode ? (
@@ -172,9 +180,8 @@ function Navbar() {
             {/* Mobile menu button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className={`md:hidden p-2 rounded-lg transition duration-200 ${
-                isDarkMode ? "text-white hover:bg-gray-800" : "text-gray-600 hover:bg-gray-100"
-              }`}
+              className={`md:hidden p-2 rounded-lg transition duration-200 ${isDarkMode ? "text-white hover:bg-gray-800" : "text-gray-600 hover:bg-gray-100"
+                }`}
             >
               {isMenuOpen ? (
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

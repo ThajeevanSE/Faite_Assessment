@@ -1,11 +1,14 @@
 package com.faite_assessment.backend.Services;
 
-import com.faite_assessment.backend.Entities.Category;
+import com.faite_assessment.backend.Dtos.ProductRequestDTO;
 import com.faite_assessment.backend.Entities.Product;
+import com.faite_assessment.backend.Entities.User;
 import com.faite_assessment.backend.Repositories.ProductRepository;
+import com.faite_assessment.backend.Repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -13,22 +16,45 @@ import java.util.List;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final UserRepository userRepository;
 
-    public Product save(Product product) {
+    public Product addProduct(ProductRequestDTO dto, String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Product product = new Product();
+        product.setTitle(dto.getTitle());
+        product.setDescription(dto.getDescription());
+        product.setPrice(dto.getPrice());
+        product.setCategory(dto.getCategory());
+        product.setCondition(dto.getCondition());
+        product.setSaleStatus(dto.getSaleStatus());
+        product.setImageUrl(dto.getImageUrl());
+        product.setUser(user);
+        product.setCreatedAt(LocalDateTime.now());
+
         return productRepository.save(product);
     }
 
-    public List<Product> getAll() {
-        return productRepository.findAll();
+    public List<Product> getMyProducts(String email) {
+        return productRepository.findByUserEmail(email);
     }
 
-    public List<Product> getByCategory(Category category) {
-        return productRepository.findByCategory(category);
-    }
+    public Product updateProduct(Long id, ProductRequestDTO dto, String email) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
 
-    // 🔹 REQUIRED FOR CART CONTROLLER
-    public Product getById(Long id) {
-        return productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+        // Security check: Only the owner can edit
+        if (!product.getUser().getEmail().equals(email)) {
+            throw new RuntimeException("Unauthorized to edit this product");
+        }
+
+        product.setTitle(dto.getTitle());
+        product.setPrice(dto.getPrice());
+        product.setDescription(dto.getDescription());
+        product.setCondition(dto.getCondition());
+        product.setSaleStatus(dto.getSaleStatus());
+
+        return productRepository.save(product);
     }
 }

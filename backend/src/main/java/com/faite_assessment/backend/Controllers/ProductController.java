@@ -1,16 +1,19 @@
 package com.faite_assessment.backend.Controllers;
 
-
-import com.faite_assessment.backend.Entities.Category;
+import com.faite_assessment.backend.Dtos.ProductRequestDTO;
 import com.faite_assessment.backend.Entities.Product;
-import com.faite_assessment.backend.Entities.User;
-import com.faite_assessment.backend.Security.JwtUtil;
-import com.faite_assessment.backend.Services.CategoryService;
 import com.faite_assessment.backend.Services.ProductService;
-import com.faite_assessment.backend.Services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType; // Correct Import
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
@@ -19,39 +22,38 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
-    private final CategoryService categoryService;
-    private final UserService userService;
-    private final JwtUtil jwtUtil;
 
-    // 🔹 ADD PRODUCT (USER)
-    @PostMapping
-    public Product addProduct(
-            @RequestBody Product product,
-            @RequestHeader("Authorization") String authHeader
-    ) {
-        String token = authHeader.substring(7);
-        String email = jwtUtil.extractEmail(token);
+    @PostMapping(value = "/add", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Product> addProduct(
+            @RequestPart("dto") ProductRequestDTO dto,
+            @RequestPart("image") MultipartFile image,
+            Authentication authentication) throws IOException {
 
-        User seller = userService.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        String email = authentication.getName();
 
-        product.setSeller(seller);
-        product.setStatus("AVAILABLE");
+        // Ensure the directory exists
+        Path uploadPath = Paths.get("uploads");
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
 
-        return productService.save(product);
+        String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
+        Path path = uploadPath.resolve(fileName);
+        Files.copy(image.getInputStream(), path);
+
+        dto.setImageUrl("/uploads/" + fileName);
+
+        return ResponseEntity.ok(productService.addProduct(dto, email));
     }
 
-    // 🔹 GET ALL PRODUCTS (PUBLIC)
-    @GetMapping
-    public List<Product> getAllProducts() {
-        return productService.getAll();
+    @GetMapping("/my-products")
+    public ResponseEntity<List<Product>> getMyProducts(Authentication authentication) {
+        String email = authentication.getName();
+        return ResponseEntity.ok(productService.getMyProducts(email));
     }
-
-    // 🔹 GET PRODUCTS BY CATEGORY ID
-    @GetMapping("/category/{categoryId}")
-    public List<Product> getProductsByCategory(@PathVariable Long categoryId) {
-        Category category = categoryService.getById(categoryId);
-        return productService.getByCategory(category);
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody ProductRequestDTO dto, Authentication authentication) {
+        String email = authentication.getName();
+        return ResponseEntity.ok(productService.updateProduct(id, dto, email));
     }
 }
-

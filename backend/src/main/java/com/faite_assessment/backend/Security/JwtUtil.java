@@ -37,6 +37,15 @@ public class JwtUtil {
                 .getBody()
                 .getSubject();
     }
+    // Add this method inside your JwtUtil class
+    public String extractRole(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("role", String.class);
+    }
 
     public boolean validateToken(String token) {
         try {

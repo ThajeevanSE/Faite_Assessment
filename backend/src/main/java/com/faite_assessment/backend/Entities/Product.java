@@ -1,15 +1,16 @@
 package com.faite_assessment.backend.Entities;
 
+import com.faite_assessment.backend.Models.Category;
+import com.faite_assessment.backend.Models.ProductCondition;
+import com.faite_assessment.backend.Models.SaleStatus;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "products")
-@Getter
-@Setter
+@Data
 public class Product {
 
     @Id
@@ -17,20 +18,27 @@ public class Product {
     private Long id;
 
     private String title;
+
+    @Column(length = 1000)
     private String description;
+
     private Double price;
 
-    private String condition; // NEW / USED
-
-    private String status = "AVAILABLE";
-
-    @ManyToOne
-    @JoinColumn(name = "category_id")
+    @Enumerated(EnumType.STRING)
     private Category category;
 
-    @ManyToOne
-    @JoinColumn(name = "seller_id")
-    private User seller;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "product_condition")
+    private ProductCondition condition; // NEW / USED
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Enumerated(EnumType.STRING)
+    private SaleStatus saleStatus; // AVAILABLE / SOLD
+
+    private String imageUrl;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user; // owner
+
+    private LocalDateTime createdAt;
 }
