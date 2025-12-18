@@ -13,5 +13,6 @@ public class ProductRequestDTO {
     private Category category;
     private ProductCondition condition;
     private SaleStatus saleStatus;
+    private String phoneNum;
     private String imageUrl;
 }

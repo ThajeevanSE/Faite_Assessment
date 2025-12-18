@@ -56,7 +56,7 @@ function Shopping() {
               value={category}
               onChange={(e) => setCategory(e.target.value)}
             >
-              <option value="">All Categories</option>
+              <option value="">All</option>
               <option value="ELECTRONICS">Electronics</option>
               <option value="TRAVEL">Travel</option>
               <option value="FASHION">Fashion</option>

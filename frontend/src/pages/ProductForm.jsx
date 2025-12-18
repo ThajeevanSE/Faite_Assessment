@@ -16,8 +16,10 @@ function ProductForm() {
     category: "ELECTRONICS",
     condition: "USED",
     saleStatus: "AVAILABLE",
+    phoneNum: "", // Added phone number field
   });
 
+  // Fetch data if in Edit Mode
   useEffect(() => {
     if (id) {
       api.get(`/products/my-products`).then((res) => {
@@ -30,6 +32,7 @@ function ProductForm() {
             category: product.category,
             condition: product.condition,
             saleStatus: product.saleStatus,
+            phoneNum: product.phoneNum || "", // Map existing phone number
           });
           if (product.imageUrl) {
             setImagePreview(`http://localhost:8080${product.imageUrl}`);
@@ -51,26 +54,23 @@ function ProductForm() {
     e.preventDefault();
     setLoading(true);
 
-    
     const data = new FormData();
     
-    
+    // Append JSON data
     data.append(
       "dto",
       new Blob([JSON.stringify(formData)], { type: "application/json" })
     );
 
-    
+    // Append Image
     if (imageFile) {
       data.append("image", imageFile);
     }
 
     try {
       if (id) {
-       
         await api.put(`/products/update/${id}`, formData); 
       } else {
-        
         await api.post("/products/add", data); 
       }
       navigate("/my-products");
@@ -105,7 +105,7 @@ function ProductForm() {
           />
         </div>
 
-        {/* Price and Category */}
+        {/* Price and Phone Number */}
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-semibold text-gray-700">Price ($)</label>
@@ -118,22 +118,33 @@ function ProductForm() {
             />
           </div>
           <div>
+            <label className="block text-sm font-semibold text-gray-700">Contact Number</label>
+            <input
+              type="text"
+              required
+              placeholder="+1 234 567 890"
+              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+              value={formData.phoneNum}
+              onChange={(e) => setFormData({ ...formData, phoneNum: e.target.value })}
+            />
+          </div>
+        </div>
+
+        {/* Category & Condition */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
             <label className="block text-sm font-semibold text-gray-700">Category</label>
             <select
               className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white"
               value={formData.category}
               onChange={(e) => setFormData({ ...formData, category: e.target.value })}
             >
-              <option value="TRAVEL">Travel</option>
               <option value="ELECTRONICS">Electronics</option>
+              <option value="TRAVEL">Travel</option>
               <option value="FASHION">Fashion</option>
               <option value="HOME">Home</option>
             </select>
           </div>
-        </div>
-
-        {/* Condition and Status */}
-        <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-semibold text-gray-700">Condition</label>
             <select
@@ -145,9 +156,12 @@ function ProductForm() {
               <option value="USED">Used</option>
             </select>
           </div>
-          <div>
-            <label className="block text-sm font-semibold text-gray-700">Sale Status</label>
-            <select
+        </div>
+
+        {/* Sale Status */}
+        <div>
+           <label className="block text-sm font-semibold text-gray-700">Sale Status</label>
+           <select
               className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white"
               value={formData.saleStatus}
               onChange={(e) => setFormData({ ...formData, saleStatus: e.target.value })}
@@ -155,7 +169,6 @@ function ProductForm() {
               <option value="AVAILABLE">Available</option>
               <option value="SOLD">Sold Out</option>
             </select>
-          </div>
         </div>
 
         {/* Image Upload Field */}

@@ -36,9 +36,10 @@ public class Product {
 
     private String imageUrl;
 
+    private String phoneNum;
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user; // owner
+    private User user;
 
     private LocalDateTime createdAt;
 }

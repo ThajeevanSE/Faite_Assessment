@@ -88,17 +88,9 @@ function Navbar() {
                 {role === "admin" ? "Admin Dashboard" : "Dashboard"}
               </Link>
 
-             
-                <Link
-                  to="/profile"
-                  className={`px-4 py-2 rounded-lg font-medium transition duration-200 ${isDarkMode
-                    ? "text-white hover:bg-gray-800"
-                    : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
-                    }`}
-                >
-                  Profile
-                </Link>
-              
+
+
+
               {role !== "admin" && (
                 <Link
                   to="/my-products"
@@ -114,8 +106,8 @@ function Navbar() {
                 <Link
                   to="/shopping"
                   className={`px-4 py-2 rounded-lg font-medium transition duration-200 ${isDarkMode
-                      ? "text-white hover:bg-gray-800"
-                      : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                    ? "text-white hover:bg-gray-800"
+                    : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
                     }`}
                 >
                   Shopping
@@ -174,12 +166,14 @@ function Navbar() {
                 {userName ? `Hello, ${userName}` : "Hello"}
               </span>
 
-              <img
-                src={imageUrl}
-                alt="Profile"
-                onError={(e) => { e.target.src = "/default-avatar.png"; }}
-                className="w-10 h-10 rounded-full object-cover border-2 border-blue-500 hover:border-blue-600 transition duration-200 cursor-pointer"
-              />
+              <Link to="/profile">
+                <img
+                  src={imageUrl}
+                  alt="Profile"
+                  onError={(e) => { e.target.src = "/default-avatar.png"; }}
+                  className="w-10 h-10 rounded-full object-cover border-2 border-blue-500 hover:border-blue-600 transition duration-200 cursor-pointer"
+                />
+              </Link>
 
               <button
                 onClick={handleLogout}
@@ -214,13 +208,19 @@ function Navbar() {
         <div className={`${isDarkMode ? "bg-gray-800 text-white border-gray-700" : "bg-white text-gray-800 border-gray-200"} md:hidden border-t`}>
           <div className="px-4 py-3 space-y-3">
             <div className="flex items-center space-x-3 pb-3 border-b">
-              <img
-                src={imageUrl}
-                alt="Profile"
-                onError={(e) => { e.target.src = "/default-avatar.png"; }}
-                className="w-10 h-10 rounded-full object-cover border-2 border-blue-500"
-              />
+
+              <Link to="/profile">
+                <img
+                  src={imageUrl}
+                  alt="Profile"
+                  onError={(e) => { e.target.src = "/default-avatar.png"; }}
+                  className="w-10 h-10 rounded-full object-cover border-2 border-blue-500 hover:border-blue-600 transition duration-200 cursor-pointer"
+                />
+              </Link>
+
               <span className="text-sm font-medium">{userName ? `Hello, ${userName}` : "Hello"}</span>
+
+
             </div>
 
             <Link

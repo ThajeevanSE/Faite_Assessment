@@ -103,7 +103,7 @@ function Profile() {
       }`}
     >
       {/* Header */}
-      <div
+      {/* <div
         className={`shadow-sm border-b ${
           isDarkMode ? "border-gray-700 bg-gray-800" : "border-gray-200 bg-white"
         }`}
@@ -133,7 +133,7 @@ function Profile() {
             </p>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

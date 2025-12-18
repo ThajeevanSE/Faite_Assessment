@@ -30,6 +30,7 @@ public class ProductService {
         product.setCategory(dto.getCategory());
         product.setCondition(dto.getCondition());
         product.setSaleStatus(dto.getSaleStatus());
+        product.setPhoneNum(dto.getPhoneNum());
         product.setImageUrl(dto.getImageUrl());
         product.setUser(user);
         product.setCreatedAt(LocalDateTime.now());
@@ -55,6 +56,7 @@ public class ProductService {
         product.setDescription(dto.getDescription());
         product.setCondition(dto.getCondition());
         product.setSaleStatus(dto.getSaleStatus());
+        product.setPhoneNum(dto.getPhoneNum());
 
         return productRepository.save(product);
     }
@@ -69,5 +71,21 @@ public class ProductService {
     public Product getProductById(Long id) {
         return productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
+    }
+    // Inside ProductService class
+
+    public void deleteProduct(Long id, String email) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        // Security Check: Ensure the user trying to delete is the owner
+        if (!product.getUser().getEmail().equals(email)) {
+            throw new RuntimeException("You are not authorized to delete this product");
+        }
+
+        productRepository.delete(product);
+
+        // Optional: You could add logic here to delete the image file from the 'uploads' folder
+        // to save space, but for now, database deletion is sufficient.
     }
 }

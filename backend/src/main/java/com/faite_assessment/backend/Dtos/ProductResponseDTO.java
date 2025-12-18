@@ -14,5 +14,6 @@ public class ProductResponseDTO {
     public Category category;
     public ProductCondition condition;
     public SaleStatus saleStatus;
+    public String phoneNum;
     public String imageUrl;
 }

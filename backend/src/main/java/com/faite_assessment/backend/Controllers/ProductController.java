@@ -56,7 +56,7 @@ public class ProductController {
         String email = authentication.getName();
         return ResponseEntity.ok(productService.updateProduct(id, dto, email));
     }
-   
+
     @GetMapping("/browse")
     public ResponseEntity<List<Product>> browseProducts(
             @RequestParam(required = false) String search,
@@ -75,9 +75,17 @@ public class ProductController {
         return ResponseEntity.ok(productService.getAllProducts(search, catEnum));
     }
 
-    // Single Product Detail View
+
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
         return ResponseEntity.ok(productService.getProductById(id));
+    }
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id, Authentication authentication) {
+        String email = authentication.getName();
+        productService.deleteProduct(id, email);
+        return ResponseEntity.noContent().build(); // Returns HTTP 204 (Success, no content)
     }
 }
