@@ -13,6 +13,8 @@ import ProductForm from "./pages/ProductForm";
 import Shopping from "./pages/Shopping";
 import ProductDetails from "./pages/ProductDetails";
 import Favorites from "./pages/Favorites";
+import Chat from "./pages/Chat";
+import Inbox from "./pages/Inbox";
 
 function App() {
   return (
@@ -110,6 +112,23 @@ function App() {
             element={
               <ProtectedRoute>
                 <Favorites />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/chat/:userId"
+            element={
+              <ProtectedRoute>
+                <Chat />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/inbox"
+            element={
+              <ProtectedRoute>
+                <Inbox />
               </ProtectedRoute>
             }
           />

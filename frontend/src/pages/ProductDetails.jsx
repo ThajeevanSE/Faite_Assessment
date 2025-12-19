@@ -8,6 +8,10 @@ function ProductDetails() {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Messaging State
+  const [messageText, setMessageText] = useState("");
+  const [showChatBox, setShowChatBox] = useState(false);
+
   const IMAGE_BASE_URL = "http://localhost:8080";
 
   useEffect(() => {
@@ -16,6 +20,33 @@ function ProductDetails() {
       .catch((err) => console.error("Error", err))
       .finally(() => setLoading(false));
   }, [id]);
+
+  // Function to handle sending the message
+  const handleSendMessage = async () => {
+    if (!messageText.trim()) return;
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+        alert("Please log in to send a message.");
+        navigate("/");
+        return;
+    }
+
+    try {
+        await api.post("/messages/send", {
+            receiverId: product.user?.id, // Assumes product.user.id is available from backend
+            productId: product.id,
+            content: messageText
+        });
+        alert("Message sent successfully!");
+        setMessageText("");
+        setShowChatBox(false);
+    } catch (error) {
+        console.error("Failed to send message", error);
+        alert("Failed to send message. Please try again.");
+    }
+    navigate(`/chat/${product.user.id}`);
+  };
 
   if (loading) return <div className="text-center p-10">Loading details...</div>;
   if (!product) return <div className="text-center p-10">Product not found.</div>;
@@ -69,18 +100,49 @@ function ProductDetails() {
             <p className="leading-relaxed">{product.description}</p>
           </div>
 
-          {product.phoneNum ? (
-            <a 
-                href={`tel:${product.phoneNum}`} 
-                className="block w-full text-center bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg transition transform hover:scale-[1.02]"
-            >
-                Call Seller Now
-            </a>
-          ) : (
-            <button disabled className="w-full bg-gray-300 text-gray-500 font-bold py-4 rounded-xl cursor-not-allowed">
-                Contact Unavailable
-            </button>
-          )}
+          <div className="space-y-3">
+              {/* Call Button */}
+              {product.phoneNum ? (
+                <a 
+                    href={`tel:${product.phoneNum}`} 
+                    className="block w-full text-center bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg transition transform hover:scale-[1.02]"
+                >
+                    Call Seller Now
+                </a>
+              ) : (
+                <button disabled className="w-full bg-gray-300 text-gray-500 font-bold py-4 rounded-xl cursor-not-allowed">
+                    Contact Unavailable
+                </button>
+              )}
+
+              {/* Message Button */}
+              <button 
+                  onClick={() => setShowChatBox(!showChatBox)}
+                  className="w-full bg-white border-2 border-indigo-600 text-indigo-600 font-bold py-4 rounded-xl hover:bg-indigo-50 transition transform hover:scale-[1.02]"
+              >
+                 {showChatBox ? "Cancel Message" : "Message Seller"}
+              </button>
+
+              {/* Chat Input Box */}
+              {showChatBox && (
+                  <div className="p-4 bg-gray-50 rounded-xl border border-indigo-100 shadow-inner">
+                      <textarea 
+                          className="w-full p-3 border rounded-lg mb-3 focus:ring-2 focus:ring-indigo-500 outline-none" 
+                          placeholder="Hi, is this still available?"
+                          rows="3"
+                          value={messageText}
+                          onChange={(e) => setMessageText(e.target.value)}
+                      />
+                      <button 
+                          onClick={handleSendMessage}
+                          className="w-full bg-indigo-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-indigo-700 transition"
+                      >
+                          Send Message
+                      </button>
+                  </div>
+              )}
+          </div>
+
         </div>
       </div>
     </div>

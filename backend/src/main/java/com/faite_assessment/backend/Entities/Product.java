@@ -40,7 +40,7 @@ public class Product {
     private String phoneNum;
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonIgnore
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"password", "favoriteProducts", "activityLogs", "role"})
     private User user;
 
     private LocalDateTime createdAt;

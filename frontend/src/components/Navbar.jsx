@@ -124,6 +124,17 @@ function Navbar() {
                   Favorites
                 </Link>
               )}
+              {role !== "admin" && (
+                <Link
+                  to="/inbox"
+                  className={`px-4 py-2 rounded-lg font-medium transition duration-200 ${isDarkMode
+                    ? "text-white hover:bg-gray-800"
+                    : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                    }`}
+                >
+                  Messages
+                </Link>
+              )}
 
             </div>
           </div>
@@ -257,6 +268,15 @@ function Navbar() {
                 className="block w-full text-left px-4 py-2 rounded-lg font-medium hover:bg-blue-50 hover:text-blue-600 transition duration-200"
               >
                 Favorites
+              </Link>
+            )}
+            {role !== "admin" && (
+              <Link
+                to="/inbox"
+                onClick={() => setIsMenuOpen(false)}
+                className="block w-full text-left px-4 py-2 rounded-lg font-medium hover:bg-blue-50 hover:text-blue-600 transition duration-200"
+              >
+                Messages
               </Link>
             )}
 
