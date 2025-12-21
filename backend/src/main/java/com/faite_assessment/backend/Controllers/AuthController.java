@@ -26,7 +26,7 @@ public class AuthController {
     private final ActivityLogService activityLogService;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-    private final EmailService emailService; // Inject EmailService
+    private final EmailService emailService;
     @PostMapping("/register")
     public String register(@RequestBody User user) {
 
