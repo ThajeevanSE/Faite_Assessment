@@ -12,7 +12,7 @@ function ProductDetails() {
   const [messageText, setMessageText] = useState("");
   const [showChatBox, setShowChatBox] = useState(false);
 
-  
+
   const IMAGE_BASE_URL = "http://localhost:8080";
 
   useEffect(() => {
@@ -22,21 +22,21 @@ function ProductDetails() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  
+
   const handleSendMessage = async () => {
     if (!messageText.trim()) return;
 
     const token = localStorage.getItem("token");
     if (!token) {
       alert("Please log in to send a message.");
-      navigate("/"); 
+      navigate("/");
       return;
     }
 
-  
+
     if (!product?.user?.id) {
-        alert("Cannot contact seller: Seller information missing.");
-        return;
+      alert("Cannot contact seller: Seller information missing.");
+      return;
     }
 
     try {
@@ -50,8 +50,8 @@ function ProductDetails() {
       setShowChatBox(false);
       setMessageText("");
 
-      navigate("/messages"); 
-      
+      navigate("/messages");
+
     } catch (error) {
       console.error("Failed to send message", error);
       alert("Failed to send message. Please try again.");
@@ -131,6 +131,12 @@ function ProductDetails() {
               className="w-full bg-white border-2 border-indigo-600 text-indigo-600 font-bold py-4 rounded-xl hover:bg-indigo-50 transition transform hover:scale-[1.02]"
             >
               {showChatBox ? "Cancel Message" : "Message Seller"}
+            </button>
+            <button
+              onClick={() => navigate(`/order/${product.id}`)}
+              className="w-full bg-green-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-green-700 transition transform hover:scale-[1.02] mb-3"
+            >
+              Buy Now
             </button>
 
             {/* Chat Input Box */}

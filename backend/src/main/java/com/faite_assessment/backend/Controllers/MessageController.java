@@ -80,7 +80,7 @@ public class MessageController {
     @PostMapping("/api/messages/send")
     public ResponseEntity<Message> sendMessageRest(@RequestBody MessageRequest request, Principal principal) {
         String senderEmail = principal.getName();
-        
+
         Message savedMsg = messageService.sendMessage(
                 senderEmail,
                 request.getReceiverId(),
